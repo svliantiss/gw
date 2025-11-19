@@ -2,7 +2,7 @@ databases:
   - name: llmgateway-db
     databaseName: llmgateway
     user: llmgateway
-    plan: starter
+    plan: free
 
 services:
   # Redis Cache
