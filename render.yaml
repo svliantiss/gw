@@ -64,7 +64,7 @@ services:
     env: node
     plan: starter
     buildCommand: pnpm install && pnpm build:core && cd apps/ui && pnpm generate && pnpm build
-    startCommand: cd apps/ui && pnpm start
+    startCommand: cd apps/ui && node .next/standalone/server.js
     healthCheckPath: /
     envVars:
       - key: NODE_ENV
