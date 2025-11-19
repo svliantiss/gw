@@ -1,6 +1,6 @@
 services:
   # PostgreSQL Database
-  - type: pspg
+  - type: pg
     name: llmgateway-db
     plan: starter
     databaseName: llmgateway
