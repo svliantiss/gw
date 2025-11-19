@@ -1,11 +1,10 @@
-services:
-  # PostgreSQL Database
-  - type: pg
-    name: llmgateway-db
-    plan: starter
+databases:
+  - name: llmgateway-db
     databaseName: llmgateway
     user: llmgateway
+    plan: starter
 
+services:
   # Redis Cache
   - type: redis
     name: llmgateway-redis
@@ -78,4 +77,3 @@ services:
         sync: false  # Set manually to API service URL
       - key: NEXT_PUBLIC_API_URL
         sync: false  # Set manually to API service URL
-
