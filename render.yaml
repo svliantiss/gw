@@ -1,0 +1,81 @@
+services:
+  # PostgreSQL Database
+  - type: pspg
+    name: llmgateway-db
+    plan: starter
+    databaseName: llmgateway
+    user: llmgateway
+
+  # Redis Cache
+  - type: redis
+    name: llmgateway-redis
+    plan: starter
+    maxmemoryPolicy: allkeys-lru
+
+  # API Service
+  - type: web
+    name: llmgateway-api
+    env: node
+    plan: starter
+    buildCommand: pnpm install && pnpm build:core && cd apps/api && pnpm build
+    startCommand: cd apps/api && pnpm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4002
+      - key: DATABASE_URL
+        fromDatabase:
+          name: llmgateway-db
+          property: connectionString
+      - key: REDIS_HOST
+        fromService:
+          name: llmgateway-redis
+          type: redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          name: llmgateway-redis
+          type: redis
+          property: port
+      - key: REDIS_PASSWORD
+        fromService:
+          name: llmgateway-redis
+          type: redis
+          property: password
+      - key: API_URL
+        sync: false  # Set manually in Render dashboard
+      - key: UI_URL
+        sync: false  # Set manually in Render dashboard
+      - key: ORIGIN_URLS
+        sync: false  # Set manually in Render dashboard
+      - key: AUTH_SECRET
+        generateValue: true
+      - key: PASSKEY_RP_ID
+        sync: false  # Set manually (your domain)
+      - key: PASSKEY_RP_NAME
+        value: LLMGateway
+      - key: COOKIE_DOMAIN
+        sync: false  # Set manually (your domain)
+      - key: RUN_MIGRATIONS
+        value: "true"
+
+  # UI Service (Portal)
+  - type: web
+    name: llmgateway-ui
+    env: node
+    plan: starter
+    buildCommand: pnpm install && pnpm build:core && cd apps/ui && pnpm generate && pnpm build
+    startCommand: cd apps/ui && pnpm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: API_URL
+        sync: false  # Set manually to API service URL
+      - key: NEXT_PUBLIC_API_URL
+        sync: false  # Set manually to API service URL
+
